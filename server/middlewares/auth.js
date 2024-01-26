@@ -13,7 +13,8 @@ exports.checkAuth = async (req, res, next) => {
   }
 
   try {
-    await firebase.auth().verifyIdToken(token);
+    const decodedToken = await firebase.auth().verifyIdToken(token);
+    console.log(`User with uid ${decodedToken.uid} has got access to restricted route.`);
   } catch (e) {
     return next(new Error('Token is invalid! Please sign in to get access.'));
   }
