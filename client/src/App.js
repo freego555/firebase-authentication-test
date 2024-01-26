@@ -47,13 +47,13 @@ function App() {
   }
 
   const getHelloWorld = async () => {
-    const accessToken = sessionStorage.getItem('accessToken');
-    const idToken = sessionStorage.getItem('idToken');
+    const accessToken = sessionStorage.getItem('accessToken') || '';
+    const idToken = sessionStorage.getItem('idToken') || '';
 
     try {
       const response = await fetch(`${config.backendUrl}/api/hello`, {
         headers: {
-          'Authorization': idToken ? `Bearer ${idToken}` : '',
+          'Authorization': `Bearer ${idToken}`,
         },
       });
       const result = await response.text();
