@@ -60,6 +60,7 @@ function App() {
       
       setHello(result);
     } catch (err) {
+      setHello(err.message);
       console.error(err);
     }
   };
