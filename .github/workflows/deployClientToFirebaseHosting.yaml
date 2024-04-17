@@ -1,0 +1,47 @@
+name: Deploy Client to Live Channel on Firebase Hosting
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  deployToFirebaseHosting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dos2unix
+        run: sudo apt install dos2unix
+
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+
+      - name: Create .env file
+        env:
+          CONFIG: ${{ vars.CONFIG }}
+        run: |
+          cd ./client
+          echo "$CONFIG" > .env
+          dos2unix .env
+          set -a
+          source .env
+          set +a
+
+      - name: Clean install dependencies and build
+        env:
+          CI: false
+        run: |
+          cd ./client
+          pwd
+          npm ci
+          npm run build
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_HOSTING_TEST }}"
+          projectId: fir-test-178bf
+          channelId: live
+          target: freego-firebase-test
+          entryPoint: ./client
